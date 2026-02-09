@@ -438,6 +438,52 @@ export default function Home() {
             {notification ? notification : (mode === 'NONE' ? "Click anywhere to get address" : `Measuring: click to add points for ${mode}`)}
           </span>
         </div>
+
+        {/* Mobile Bottom Results Card */}
+        {address && !isSidebarOpen && (
+          <div className="lg:hidden fixed bottom-20 left-4 right-4 z-[40] bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200 p-4 animate-in fade-in slide-in-from-bottom-10 duration-500">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2 flex-grow min-w-0">
+                <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600 flex-shrink-0">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs font-bold text-slate-900 truncate">{address.display_name?.split(',')[0]}</h3>
+                  <p className="text-[10px] text-slate-500 truncate">{address.display_name || address.formattedAddress}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-700 whitespace-nowrap"
+              >
+                View Details
+              </button>
+            </div>
+
+            {measurements && (
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                <div className="bg-white/50 p-2 rounded-xl border border-slate-100">
+                  <p className="text-[8px] text-slate-400 uppercase font-bold">Area</p>
+                  <p className="text-xs font-bold text-slate-900">{measurements.area_sqft?.toLocaleString(undefined, { maximumFractionDigits: 0 })} sqft</p>
+                </div>
+                <div className="bg-white/50 p-2 rounded-xl border border-slate-100">
+                  <p className="text-[8px] text-slate-400 uppercase font-bold">Perimeter</p>
+                  <p className="text-xs font-bold text-slate-900">{measurements.perimeter_ft?.toLocaleString(undefined, { maximumFractionDigits: 1 })} ft</p>
+                </div>
+              </div>
+            )}
+
+            {!readOnly && measurements && (
+              <button
+                onClick={handleSave}
+                disabled={isLoading}
+                className="w-full mt-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-blue-600/10 flex items-center justify-center gap-2"
+              >
+                <Save className="w-4 h-4" /> Save
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </main>
   )
