@@ -225,11 +225,19 @@ export default function Home() {
 
   return (
     <main className="relative flex h-screen w-screen overflow-hidden bg-slate-900">
+      {/* Sidebar Overlay for Mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[45] lg:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
-          "h-full bg-white transition-all duration-300 border-r border-slate-200 shadow-xl overflow-hidden flex flex-col z-[50]",
-          isSidebarOpen ? "w-80" : "w-0"
+          "fixed lg:relative h-full bg-white transition-all duration-300 border-r border-slate-200 shadow-xl overflow-hidden flex flex-col z-[50]",
+          isSidebarOpen ? "w-[85vw] sm:w-80" : "w-0"
         )}>
         <div className="p-6 flex-shrink-0">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">LocaMetry</h1>
@@ -395,7 +403,11 @@ export default function Home() {
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="absolute left-4 top-1/2 -translate-y-1/2 z-[50] p-2 bg-white rounded-full shadow-xl border border-slate-200 transition-all text-slate-600 hover:text-blue-600"
-          style={{ left: isSidebarOpen ? '304px' : '16px' }} // 320px (w-80) - 16px (half button) approx or just align with edge
+          style={{
+            left: isSidebarOpen
+              ? (typeof window !== 'undefined' && window.innerWidth < 1024 ? 'calc(85vw - 16px)' : '304px')
+              : '16px'
+          }}
         >
           {isSidebarOpen ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
         </button>
@@ -417,9 +429,14 @@ export default function Home() {
         </button>
 
         {/* Floating Tooltip */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 px-6 py-2 bg-slate-900/80 backdrop-blur-md text-white text-xs font-bold rounded-full shadow-2xl border border-white/10 flex items-center gap-3">
+        <div className={cn(
+          "absolute top-6 left-1/2 -translate-x-1/2 z-30 px-6 py-2 bg-slate-900/80 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold rounded-full shadow-2xl border border-white/10 flex items-center gap-3 transition-all",
+          isSidebarOpen && "opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto"
+        )}>
           <div className={cn("w-2 h-2 rounded-full", isLoading ? "bg-amber-400 animate-pulse" : "bg-emerald-400")} />
-          {notification ? notification : (mode === 'NONE' ? "Click anywhere to get address" : `Measuring: click to add points for ${mode}`)}
+          <span className="truncate max-w-[200px] sm:max-w-none">
+            {notification ? notification : (mode === 'NONE' ? "Click anywhere to get address" : `Measuring: click to add points for ${mode}`)}
+          </span>
         </div>
       </div>
     </main>
