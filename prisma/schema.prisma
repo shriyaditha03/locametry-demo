@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Survey {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Location Data
+  latitude        Float
+  longitude       Float
+  formattedAddress String
+  house_number    String   @default("")
+  road           String   @default("")
+  neighbourhood   String   @default("")
+  city           String   @default("")
+  town           String   @default("")
+  village        String   @default("")
+  county         String   @default("")
+  district       String   @default("")
+  state          String   @default("")
+  province       String   @default("")
+  postcode       String   @default("")
+  country        String   @default("")
+
+  // Measurement Data
+  mode            String   // RECT3, FOUR, POLY
+  points          Json     // List of {lat, lng}
+  length_m        Float?
+  length_ft       Float?
+  width_m         Float?
+  width_ft        Float?
+  area_sqm        Float?
+  area_sqft       Float?
+  perimeter_m     Float?
+  perimeter_ft    Float?
+
+  @@index([latitude, longitude])
+}
+
+model GeoCache {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  
+  // Rounded coordinates (5 decimals as per requirement)
+  latitude        Float
+  longitude       Float
+
+  // Address Details
+  formattedAddress String
+  address          Json     // Full OSM address object
+  geojson          Json?    // GeoJSON boundary data
+
+  @@unique([latitude, longitude])
+}
